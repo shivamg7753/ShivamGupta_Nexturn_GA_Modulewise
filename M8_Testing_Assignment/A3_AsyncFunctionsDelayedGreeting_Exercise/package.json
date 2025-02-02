@@ -1,0 +1,18 @@
+{
+  "name": "a3_asyncfunctionsdelayedgreeting_exercise",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": ["async", "delayedGreeting", "exercise"],
+  "author": "Your Name",
+  "license": "ISC",
+  "description": "An exercise to test async functions using mock timers and Jest.",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

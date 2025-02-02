@@ -1,0 +1,152 @@
+1. Find High-Spending Users
+Find users who have spent more than $500 in total across all their orders.
+
+db.users.aggregate([
+  {
+    $lookup: {
+      from: "orders",
+      localField: "userId",
+      foreignField: "userId",
+      as: "orders",
+    },
+  },
+  {
+    $unwind: "$orders",
+  },
+  {
+    $group: {
+      _id: "$userId",
+      name: { $first: "$name" },
+      totalSpent: { $sum: "$orders.totalAmount" },
+    },
+  },
+  {
+    $match: {
+      totalSpent: { $gt: 500 },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      userId: "$_id",
+      name: 1,
+      totalSpent: 1,
+    },
+  },
+]);
+
+********************************************************************************************
+
+2. List Popular Products by Average Rating
+Retrieve products with an average rating greater than or equal to 4
+
+db.products.aggregate([
+  {
+    $unwind: "$ratings",
+  },
+  {
+    $group: {
+      _id: "$productId",
+      name: { $first: "$name" },
+      averageRating: { $avg: "$ratings.rating" },
+    },
+  },
+  {
+    $match: {
+      averageRating: { $gte: 4 },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      productId: "$_id",
+      name: 1,
+      averageRating: 1,
+    },
+  },
+]);
+
+************************************************************************************************
+3. Search for Orders in a Specific Time Range
+Find all orders placed between "2024-12-01" and "2024-12-31" and include the user name.
+
+db.orders.aggregate([
+  {
+    $match: {
+      orderDate: {
+        $gte: new Date("2024-12-01T00:00:00Z"),
+        $lte: new Date("2024-12-31T23:59:59Z"),
+      },
+    },
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "userId",
+      foreignField: "userId",
+      as: "user",
+    },
+  },
+  {
+    $unwind: "$user",
+  },
+  {
+    $project: {
+      _id: 0,
+      orderId: 1,
+      orderDate: 1,
+      totalAmount: 1,
+      status: 1,
+      userName: "$user.name",
+    },
+  },
+]);
+
+
+****************************************************************************************************
+
+4. Update Stock After Order Completion
+Reduce the stock of each product based on the quantities in an order.
+
+db.orders.find({ orderId: "ORD001" }).forEach((order) => {
+  order.items.forEach((item) => {
+    db.products.updateOne(
+      { productId: item.productId },
+      { $inc: { stock: -item.quantity } }
+    );
+  });
+});
+
+
+*****************************************************************************************************
+
+5. Find Nearest Warehouse
+Find the nearest warehouse within a 50-kilometer radius that stocks "P001".
+
+db.warehouses.aggregate([
+  {
+    $geoNear: {
+      near: { type: "Point", coordinates: [-74.006, 40.7128] },
+      distanceField: "distance",
+      maxDistance: 50000, // 50 km in meters
+      query: { products: "P001" },
+      spherical: true,
+    },
+  },
+  {
+    $limit: 1,
+  },
+  {
+    $project: {
+      _id: 0,
+      warehouseId: 1,
+      distance: 1,
+      location: 1,
+      products: 1,
+    },
+  },
+]);
+
+
+
+
