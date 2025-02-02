@@ -1,3 +1,4 @@
+
 Azure Cloud Exercises
 
 Exercise 1: Create and Configure a Virtual Machine

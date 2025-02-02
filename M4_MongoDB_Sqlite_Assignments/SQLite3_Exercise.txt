@@ -1,3 +1,4 @@
+
 SQLite3 Exercises
 
 Q1. Write a query to list the names of employees hired after January 1, 2021.
@@ -33,4 +34,4 @@ Q5. Write a query to fetch all employee details along with their department name
 
 SELECT E.EmployeeID, E.Name, D.DepartmentName, E.Salary, E.HireDate
 FROM Employees E
-JOIN Departments D ON E.DepartmentID = D.DepartmentID;
+

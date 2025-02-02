@@ -1,3 +1,4 @@
+
 1. Find High-Spending Users
 Find users who have spent more than $500 in total across all their orders.
 
@@ -146,7 +147,4 @@ db.warehouses.aggregate([
     },
   },
 ]);
-
-
-
 
